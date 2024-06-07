@@ -1,0 +1,8 @@
+# Exclude all .env files (environment variables)
+*.DS_Store
+
+# Exclude logs and temporary files
+oauth.md
+build.md
+deployment.yaml
+test/
