@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import chatbot from './chatbot.vue'
-
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import layoutDef from './layout/def.vue'
@@ -35,6 +33,5 @@ const appname=import.meta.env.VITE_APP_NAME
         <button class="btn-hf bg-yellow-300 w-48 justify-self-center " @click="login">Login</button>
     </div>
 
-    <chatbot />
 </layoutDef>
 </template>

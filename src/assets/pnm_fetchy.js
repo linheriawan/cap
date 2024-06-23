@@ -40,6 +40,7 @@ class sync_request{
     constructor(url){ 
         this.params={
             method: "GET", 
+            mode:'cors',
             headers: { "Content-Type": "application/json"},
         };
         this.url=url;

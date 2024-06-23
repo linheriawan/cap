@@ -22,4 +22,4 @@ const toggle=(x:string,y:string)=>{ PnM(`.${x}`).toggle(y) }
             </sctModal>
         </sctFoot>
     </div>
-</template>../../assets/script
+</template>
