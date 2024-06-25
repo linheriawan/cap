@@ -4,7 +4,7 @@ import {CAPURI,BASEURI} from '@/global';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
-import {evForm} from "../assets/script";
+import {evForm} from "@/assets/script";
 import {request} from "../assets/pnm_fetchy";
 import {MHDyna} from "../assets/pnm_dyna";
 import {state} from "@/state"

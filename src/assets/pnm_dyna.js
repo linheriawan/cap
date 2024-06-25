@@ -3,10 +3,19 @@ import {request} from "./pnm_fetchy";
 import {PnM} from "./pnm_elem";
 const MHDyna=function(d){
     var DD={
-        cfg:{click:false,filter:true,conf:true,show:10,mode:'client'/*'server'*/,display:'pagination',datakey:'id'},
+        cfg:{click:false,filter:true,conf:true,show:10,mode:'client'/*'server'*/,display:'pagination',datakey:'id',request_header:{}},
         operand:[{'<':'<'},{'>':'>'},{'<=':'<='},{'>=':'>='},{'==':'=='},{'!=':'!='},{'*':'contains'}],
         data:{},
         selected:[],
+        triggerError:(error,type)=>{
+            if(DD.cfg.onError != null){ DD.cfg.onError(error,type); }
+            else{ 
+                switch(type){
+                    case 'error':console.log(error); break;
+                    default: console.log(error); break;
+                }
+            }
+        },
         init:()=>{
             DD.section==undefined && (DD.section={}),
                     DD.section.reloadBtn=PnM('a').html(`<i class="fas fa-redo"></i>`).get(),
@@ -154,7 +163,7 @@ const MHDyna=function(d){
                                 case '!=': rf=rf && i[f.column] !== f.value; break;
                                 default: rf=rf && i[f.column].indexOf(f.value) >=0; break;
                             }
-                        }catch(e){console.error(`some error: ${e}`);}
+                        }catch(e){ DD.triggerError(`some error: ${e}`,'error'); }
                     }); return rf;
                 });
             }else{
@@ -164,8 +173,12 @@ const MHDyna=function(d){
                     var f=DD.cfg.colfilter[k];
                     param[f.column]=`${f.operand}${f.value}`;
                 })
-                d= await (await request(DD.cfg.url).post(param)).result; 
-                d.T!=undefined && (delete d.T);
+                try{
+                    d= await (await request(DD.cfg.url).header(DD.cfg.request_header).post(param)); 
+                    if(d.code>400){ DD.triggerError(d,'error');  }
+                    d=d.result;
+                    d.T!=undefined && (delete d.T);
+                }catch(e){ DD.triggerError(`some error: ${e}`,'error');}
                 InM.sync();
             }
             DD.data=d.r!=undefined? d.r : d;

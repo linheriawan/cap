@@ -40,7 +40,7 @@ const JWT={
                 return {"_verify":false,"error":"invalid token"}
                 // throw new Error('Invalid JWT token'); 
             }
-            const publicKey = await JWT.importPemKey(publicKeyPem);
+            const publicKey = await JWT.importPemKey(publicKeyPem.trim());
             const isValid = await crypto.subtle.verify(
                 { name: 'RSASSA-PKCS1-v1_5' },
                 publicKey,
@@ -50,8 +50,7 @@ const JWT={
             if (!isValid) { 
                 return {"_verify":false,"error":"invalid"}
                 //throw new Error('JWT verification failed'); 
-            }
-            else{
+            }else{
                 let res=JWT.extract(token);
                 res._verify=true;
                 return res;

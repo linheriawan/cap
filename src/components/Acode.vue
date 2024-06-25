@@ -5,13 +5,14 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 import layoutFull from './layout/full.vue'
 
-import {evForm} from "../assets/script";
+import {evForm,LS} from "@/assets/script";
 import {request} from "../assets/pnm_fetchy";
 import {MHDyna} from "../assets/pnm_dyna";
 import {state} from "@/state"
 
 const C_URL=CAPURI+"/settings/authorization_code";
 const C_NAME="Au Code";
+const REQ_HDR={'Authorization':`Bearer ${LS.get('token').access_token}`};
 
 const head={
   appname:`${import.meta.env.VITE_APP_NAME}`,
@@ -33,14 +34,15 @@ onMounted(() => {
     Dyna.DispData=MHDyna;
     
     Dyna.DispData({ 
-        hab:[{'<i class="fas fa-plus"></i>':async (x:string)=>{
-            var u=C_URL,
-                res=await request(u).get();
-            console.log(res);
-            // InM.modal(res.result.replaceAll("</script","<\/script"));
-        }}],
-        fab:[{'<i class="fas fa-paperclip"></i>':(x:string)=>{alert(x)}}],
-        click:myclick
+      request_header:REQ_HDR,
+      hab:[{'<i class="fas fa-plus"></i>':async (x:string)=>{
+          var u=C_URL,
+              res=await request(u).get();
+          console.log(res);
+          // InM.modal(res.result.replaceAll("</script","<\/script"));
+      }}],
+      fab:[{'<i class="fas fa-paperclip"></i>':(x:string)=>{alert(x)}}],
+      click:myclick
     });
   }
 } 

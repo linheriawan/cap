@@ -3,18 +3,18 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import layoutDef from './layout/def.vue'
 import {toQS} from '@/assets/script'
-import {CAPURI,BASEURI} from '@/global';
+import {CAPURI,BASEURI,CLIENT_ID} from '@/global';
 
-import {LS} from "../assets/script";
+import {LS} from "@/assets/script";
 let token=LS.get('token')
 if(typeof(token)=="object" && token.access_token!='undefined') {
-    (useRouter()).push(`/auth`);      
+    (useRouter()).push(`/org`);
 }
 
 let login=()=>{
     let prm={
         "response_type":"code",
-        "client_id":"CAP",
+        "client_id":CLIENT_ID,
         "redirect_uri": BASEURI+"/auth",
         "scope":"info profile email",
         "state":"STATE",

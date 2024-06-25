@@ -1,12 +1,20 @@
 <script setup lang="ts">
+import {LS} from "@/assets/script";
 import { inject } from 'vue'
+import { useRouter } from 'vue-router';
 // const props = 
 const data=inject('head') as AppInfo
-
+const router=useRouter()
+data.username=LS.get("approle")? LS.get("approle").sub: "-name-";
+function logout(){
+    LS.unset("approle");
+    LS.unset("token");
+    router.push("/");
+}
 let acts={cssClass:"z-10", name:data.username,
     items:[
         {txt:"Preference",href:"/"},
-        {txt:"Logout",href:"/"}]
+        {txt:"Logout",action:logout}]
 }
 
 </script>

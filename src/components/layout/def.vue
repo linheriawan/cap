@@ -11,7 +11,7 @@ const toggle=(x:string,y:string)=>{ PnM(`.${x}`).toggle(y) }
         </main>
         <sctFoot>
             <template #link>
-                &#8729; <a @click="toggle('my-eula','show')" class="cursor-pointer"> Terms </a>
+                <a @click="toggle('my-eula','show')" class="cursor-pointer"> Terms </a>
                 &#8729; <a @click="toggle('my-prp','show')" class="cursor-pointer"> Policy </a>
             </template>
             <sctModal id="my-eula">

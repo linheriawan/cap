@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import {LS} from "@/assets/script";
 import _mobile from '../components/_mobile.vue'
 import _login from '../components/_login.vue'
 import Main from '../components/_Main.vue'
@@ -27,60 +28,60 @@ const routes = [
   { path: '/auth', name: "authentication", component: Auth },
   {
     path: "/client",
-    name: "Client", meta: { title: 'Client List', },
+    name: "Client", meta: { title: 'Client List', requiresAuth: true },
     component: CLIENT
   },{
     path: "/client/:id",
-    name: "ClientView", meta: { title: 'Client Form', },
+    name: "ClientView", meta: { title: 'Client Form', requiresAuth: true},
     component: ClientView
   },{
     path: "/org",
-    name: "Organization", meta: { title: 'Org List', },
+    name: "Organization", meta: { title: 'Org List', requiresAuth: true },
     component: ORG
   },{
     path: "/org/:id",
-    name: "OrgView", meta: { title: 'Org Form', },
+    name: "OrgView", meta: { title: 'Org Form', requiresAuth: true },
     component:OrgView
   },{
     path: "/user",
-    name: "User", meta: { title: 'User List', },
+    name: "User", meta: { title: 'User List', requiresAuth: true },
     component: USER
   },{
     path: "/user/:id",
-    name: "UserView", meta: { title: 'User Form', },
+    name: "UserView", meta: { title: 'User Form', requiresAuth: true},
     component:UserView
   },
   {
     path: "/scope",
-    name: "Scope", meta: { title: 'Scope List', },
+    name: "Scope", meta: { title: 'Scope List', requiresAuth: true },
     component: SCOPE
   },{
     path: "/scope/:id",
-    name: "ScopeView",meta: { title: 'Scope Form', },
+    name: "ScopeView",meta: { title: 'Scope Form', requiresAuth: true },
     component:ScopeView
   },{
     path: "/access",
-    name: "Access", meta: { title: 'A Token', },
+    name: "Access", meta: { title: 'A Token', requiresAuth: true},
     component: Access
   },{
     path: "/access/:id",
-    name: "AccessView",meta: { title: 'A Token Form', },
+    name: "AccessView",meta: { title: 'A Token Form',requiresAuth: true },
     component:AccessView
   },{
     path: "/refresh",
-    name: "Refresh", meta: { title: 'R Token', },
+    name: "Refresh", meta: { title: 'R Token',requiresAuth: true},
     component: Refresh
   },{
     path: "/refresh/:id",
-    name: "RefreshView", meta: { title: 'R Token Form', },
+    name: "RefreshView", meta: { title: 'R Token Form', requiresAuth: true},
     component:RefreshView
   },{
     path: "/acode",
-    name: "Acode", meta: { title: 'A Code List', },
+    name: "Acode", meta: { title: 'A Code List',requiresAuth: true },
     component: Acode
   },{
     path: "/acode/:id",
-    name: "AcodeView", meta: { title: 'A Code Form', },
+    name: "AcodeView", meta: { title: 'A Code Form', requiresAuth: true},
     component:AcodeView
   },
   {
@@ -95,12 +96,34 @@ const routes = [
     component: _mobile
   }
 ]
-
+function getMicrotime() {
+  const now = Date.now();
+  const highResTime = performance.now();
+  return now * 1000 + Math.floor(highResTime * 1000);
+}
+function formatMicrotime(microtime:number) {
+  const millis = Math.floor(microtime / 1000);
+  const date = new Date(millis);
+  const microseconds = microtime % 1000000;
+  const formattedDate = date.toISOString();
+  return `${formattedDate}.${microseconds.toString().padStart(6, '0')}`;
+}
 const router = createRouter({
   history: createWebHistory(), routes
 })
-router.beforeEach((to, from) => {
+router.beforeEach((to, from, next) => {
   var titl:string=String(to.meta?.title) ?? 'undefined'
   document.title = `${import.meta.env.VITE_APP_NAME} ${titl}`
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    let mycred=LS.get('approle')
+    if(mycred==false){ router.push('/'); }
+    if( mycred.exp > getMicrotime() ) { 
+      next();
+    }else{
+        console.log(`expired at ${formatMicrotime(mycred.exp)}`);
+        LS.unset('token'); 
+        router.push('/');
+    }
+  } else { next(); } // Continue to the route if no authentication is required
 })
 export default router;

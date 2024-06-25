@@ -5,6 +5,7 @@ const fetchy = new Proxy(window.fetch, {
         const [url, opts] = args;
         oret.url=url;
         // console.log(opts)
+        
         const temp=await target(oret.url, opts);
         
         oret.code=temp.status;
@@ -32,6 +33,7 @@ const fetchy = new Proxy(window.fetch, {
             oret.result= t;
         }
         delete oret.url; delete oret.response; delete oret.request;
+        
         return oret;
     },
 });
